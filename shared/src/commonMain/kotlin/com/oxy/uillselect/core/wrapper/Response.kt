@@ -13,7 +13,7 @@ data class Response<T>(
         inline fun <reified R> produce(producer: () -> R): Response<R> = try {
             success(producer())
         } catch (e: Exception) {
-            val message = e.message?: DEFAULT_MESSAGE
+            val message = e.message ?: DEFAULT_MESSAGE
             failure(message = message)
         }
 

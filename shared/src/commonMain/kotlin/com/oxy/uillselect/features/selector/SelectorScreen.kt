@@ -1,14 +1,16 @@
 package com.oxy.uillselect.features.selector
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.oxy.uillselect.core.arch.viewModels
+import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 
 @Composable
 internal fun SelectorRoute(
     modifier: Modifier = Modifier,
-    viewModel: SelectorViewModel = viewModels()
+    component: SelectorComponent
 ) {
+    val model by component.value.subscribeAsState()
     SelectorScreen(
         modifier = modifier
     )

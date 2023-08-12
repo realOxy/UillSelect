@@ -2,17 +2,19 @@ package com.oxy.uillselect.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.get
-import com.russhwolf.settings.set
 import com.oxy.uillselect.core.wrapper.Response.Companion.produce
 import com.oxy.uillselect.core.wrapper.exception
 import com.oxy.uillselect.core.wrapper.isSuccess
 import com.oxy.uillselect.core.wrapper.success
+import com.oxy.uillselect.data.api.LoginDTO
+import com.oxy.uillselect.data.api.SignupDTO
 import com.oxy.uillselect.data.api.UserApi
 import com.oxy.uillselect.data.scheme.Users
 import com.oxy.uillselect.sqldelight.data.User
 import com.oxy.uillselect.sqldelight.data.UserQueries
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
+import com.russhwolf.settings.set
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -40,14 +42,14 @@ class UserRepository(
         .asFlow()
         .mapToList(dispatcher)
         .combine(currentUserId) { users, userId ->
-            users.firstOrNull { it.id == userId }
+            users.find { it.id == userId }
         }
         .flowOn(dispatcher)
 
     suspend fun login(account: String, password: String): Result<Unit> = withContext(dispatcher) {
         val response = produce { api.login(account, password) }
         if (response.isSuccess) {
-            val login: UserApi.LoginDTO = response.success()
+            val login: LoginDTO = response.success()
             val user = login.user.toUser(Users.Role.ADMIN)
             val token = login.token
             saveAccount(user, token)
@@ -58,7 +60,7 @@ class UserRepository(
     suspend fun signup(account: String, password: String): Result<Unit> = withContext(dispatcher) {
         val response = produce { api.signup(account, password) }
         if (response.isSuccess) {
-            val login: UserApi.SignupDTO = response.success()
+            val login: SignupDTO = response.success()
             val user = login.user.toUser(Users.Role.ADMIN)
             val token = login.token
             saveAccount(user, token)

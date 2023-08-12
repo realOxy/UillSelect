@@ -14,6 +14,10 @@ val decomposeVersion = extra["decompose.version"] as String
 val sqldelightVersion = extra["sqldelight.version"] as String
 val settingsVersion = extra["settings.version"] as String
 
+configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
+    version = ktorfitVersion
+}
+
 kotlin {
     androidTarget()
 
@@ -28,17 +32,22 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
+                // settings
                 implementation("com.russhwolf:multiplatform-settings:$settingsVersion")
+
+                // sqldelight
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
 
+                // ktorfit
                 implementation("de.jensklingenberg.ktorfit:ktorfit-lib:$ktorfitVersion")
 
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
+                // decompose
+                api("com.arkivanov.decompose:decompose:$decomposeVersion")
+                api("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
         val androidMain by getting {

@@ -1,7 +1,7 @@
 package com.oxy.uillselect.data
 
 import app.cash.sqldelight.db.SqlDriver
-import com.oxy.Database
+import com.oxy.uillselect.Database
 
 expect class DriverFactory {
     fun createDriver(): SqlDriver
