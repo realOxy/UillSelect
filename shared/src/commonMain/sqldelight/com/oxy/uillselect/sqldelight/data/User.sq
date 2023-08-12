@@ -1,0 +1,22 @@
+CREATE TABLE user (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    role INTEGER NOT NULL
+);
+
+insert:
+INSERT INTO user
+VALUES ?;
+
+getAll:
+SELECT * FROM user;
+
+getAllByRole:
+SELECT * FROM user WHERE role = (?);
+
+getById:
+SELECT * FROM user WHERE (id) = (?);
+
+deleteById:
+DELETE FROM user WHERE (id) = (?);
+

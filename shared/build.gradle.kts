@@ -1,31 +1,23 @@
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
+    id("app.cash.sqldelight")
+    id("com.google.devtools.ksp")
+    id("kotlinx-serialization")
+    id("de.jensklingenberg.ktorfit")
 }
+
+val ktorVersion = extra["ktor.version"] as String
+val ktorfitVersion = extra["ktorfit.version"] as String
+val decomposeVersion = extra["decompose.version"] as String
+val sqldelightVersion = extra["sqldelight.version"] as String
+val settingsVersion = extra["settings.version"] as String
 
 kotlin {
     androidTarget()
 
     jvm("desktop")
-
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
-    cocoapods {
-        version = "1.0.0"
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.1"
-        podfile = project.file("../iosApp/Podfile")
-        framework {
-            baseName = "shared"
-            isStatic = true
-        }
-        extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
-    }
 
     sourceSets {
         val commonMain by getting {
@@ -35,6 +27,18 @@ kotlin {
                 implementation(compose.material)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+
+                implementation("com.russhwolf:multiplatform-settings:$settingsVersion")
+                implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
+
+                implementation("de.jensklingenberg.ktorfit:ktorfit-lib:$ktorfitVersion")
+
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
         val androidMain by getting {
@@ -42,20 +46,14 @@ kotlin {
                 api("androidx.activity:activity-compose:1.6.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.9.0")
+
+                implementation("app.cash.sqldelight:android-driver:$sqldelightVersion")
             }
-        }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.common)
+                implementation("app.cash.sqldelight:sqlite-driver:$sqldelightVersion")
             }
         }
     }
@@ -63,7 +61,7 @@ kotlin {
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication.common"
+    namespace = "com.oxy.uillselect"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -80,4 +78,18 @@ android {
     kotlin {
         jvmToolchain(11)
     }
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.oxy.uillselect")
+        }
+    }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspDesktop", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
 }
