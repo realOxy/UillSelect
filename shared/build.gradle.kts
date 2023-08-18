@@ -6,13 +6,13 @@ plugins {
     id("com.google.devtools.ksp")
     id("kotlinx-serialization")
     id("de.jensklingenberg.ktorfit")
+    id("kotlin-parcelize")
 }
 
 val ktorVersion = extra["ktor.version"] as String
 val ktorfitVersion = extra["ktorfit.version"] as String
 val decomposeVersion = extra["decompose.version"] as String
 val sqldelightVersion = extra["sqldelight.version"] as String
-val settingsVersion = extra["settings.version"] as String
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
     version = ktorfitVersion
@@ -32,15 +32,11 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
-                // settings
-                implementation("com.russhwolf:multiplatform-settings:$settingsVersion")
-
                 // sqldelight
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
 
                 // ktorfit
                 implementation("de.jensklingenberg.ktorfit:ktorfit-lib:$ktorfitVersion")
-
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
@@ -48,6 +44,16 @@ kotlin {
                 // decompose
                 api("com.arkivanov.decompose:decompose:$decomposeVersion")
                 api("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
+
+                // datastore
+                implementation("androidx.datastore:datastore-preferences-core:1.1.0-alpha04")
+                implementation("androidx.datastore:datastore-core-okio:1.1.0-alpha04")
+
+                // kotinx-io
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
+
+                // kotlinx-datetime
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
         val androidMain by getting {

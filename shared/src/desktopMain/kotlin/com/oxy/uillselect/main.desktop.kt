@@ -1,7 +1,12 @@
 package com.oxy.uillselect
 
 import androidx.compose.runtime.Composable
-import com.oxy.uillselect.core.arch.RootComponent
+import com.oxy.uillselect.features.RootComponent
+import com.oxy.uillselect.ui.UillSelectTheme
 
 @Composable
-fun MainView(rootComponent: RootComponent) = App(rootComponent)
+fun MainView(rootComponent: RootComponent) {
+    UillSelectTheme {
+        RootComponent(rootComponent)
+    }
+}

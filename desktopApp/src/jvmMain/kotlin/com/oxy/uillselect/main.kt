@@ -1,23 +1,31 @@
 package com.oxy.uillselect
 
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.oxy.uillselect.core.arch.DefaultRootComponent
+import com.oxy.uillselect.features.DefaultRootComponent
 import javax.swing.SwingUtilities
+
+private const val WINDOW_TITLE = "UillSelect"
 
 fun main() {
     val lifecycle = LifecycleRegistry()
 
     val root = runOnUiThread {
-        DefaultRootComponent(
-            componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        )
+        DefaultRootComponent(DefaultComponentContext(lifecycle))
     }
 
     application {
-        Window(onCloseRequest = ::exitApplication) {
+        val windowState = rememberWindowState()
+        Window(
+            state = windowState,
+            onCloseRequest = ::exitApplication,
+            title = WINDOW_TITLE,
+            icon = painterResource("compose-multiplatform.xml")
+        ) {
             MainView(root)
         }
     }
